@@ -90,6 +90,7 @@ reward_dim <- 1
 tasks_complete <- 0
 consecutive_correct <- 0
 total_trials <- 0
+submoves <- 0
 
 ## Set the output that we want to measure
 output <- 'submove'
@@ -198,6 +199,7 @@ while( total_trials < max_trials && tasks_complete < tasks_to_complete*2 )
         consecutive_correct <- consecutive_correct + 1
     } else {
         consecutive_correct = 0
+        submoves <- submoves + 1
     }
 
     ## ####################
@@ -374,7 +376,7 @@ while( total_trials < max_trials && tasks_complete < tasks_to_complete*2 )
 }
 
 if( output == 'submove' )
-    print( (total_trials/tasks_complete)-trials_per_task )
+    print( submoves/tasks_complete )
 
 if( output == 'repvals_final' ) {
     # Plot the values learned by the ancillary rep value NN
