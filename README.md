@@ -11,7 +11,7 @@ The hrr.r file is a supporting library - holographic reduced representations wer
 reward and task switching functions for the model.
 
 
-# INTERPRETING RESULTS:
+# Interpreting Results
 
 If you run the program as "Rscript wcst_ntask_demo.r 1 4 3 3" using the print values for "repvals" final, you may see the first line of output like this:
 
