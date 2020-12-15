@@ -13,16 +13,30 @@ reward and task switching functions for the model.
 
 # INTERPRETING RESULTS:
 
-Using the print values for "repvals" final, you may see output like this:
+If you run the program as "Rscript wcst_ntask_demo.r 1 4 3 3" using the print values for "repvals" final, you may see the first line of output like this:
 
-0.2594,0.3530,0.2585,0.0496,0.2525,0.2568,0.2040,0.2101,0.9988,0.9993,0.9979,1.0000
-0.3671,-0.0666,0.1726,0.1040,0.9997,0.9605,1.0003,1.0002,0.8306,0.5345,0.8042,0.5479
-0.9999,0.9991,0.9997,1.0001,0.3336,0.4137,0.4928,0.4165,0.0078,0.1574,0.1369,-0.0647
+Rule 1 results: 0.3491,0.3887,0.9935,-0.0401,0.2184,0.3543,0.9989,0.1132,0.3304,0.1701,0.9733,-0.0098
+Rule 2 results: ...
+Rule 3 results: ...
 
-In this case there are three dimensions of four values (features) each. E.g. color = { red, blue, green, yellow }.
+We really want these to be rearranged as follows, so that the dimensions (candidate for the learning rule) are along the x-axis, and the features are
+along the y-axis:
 
-If the correct dimension "rule"
+0.3491, 0.3887, 0.9935, -0.0401,
+0.2184, 0.3543, 0.9989, 0.1132,
+0.3304, 0.1701, 0.9733, -0.0098
+ 
+The above may correspond to something like this:
+ 
+red     banana  solid     big
+blue    grape   spotted   medium
+green   apple   checkered small
 
+In a single trial the candidate is presented with an object of four features, and asked to select one. The rule, which alternates after several correct selections (see WCST references in the paper), corresponds to a dimension. From the results, we can see that the rule for reward was "pattern".
+    If the trial was "big red spotted banana", the candidate should pick "spotted" from the four possible choices to get a reward.
+    If the trial was "small green solid grape", the candidate should pick "solid" from the four possible choices to get a reward.
+    
+There are A LOT of variables that can be toggled in this application to cover the ground from the research - I'd recommend starting with the defaults if you want to give it a try.
 
 # Contact
 
