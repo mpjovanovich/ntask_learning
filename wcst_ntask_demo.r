@@ -30,7 +30,7 @@
 #
 # Desired output can be toggled with the output parameter
 #
-# Example usage: Rscript wcst_ntask_demo.r 1 3 3
+# Example usage: Rscript wcst_ntask_demo.r 1 4 3 3
 #
 ##########################################################################
 
@@ -47,9 +47,11 @@ set.seed(as.integer(args[1]))
 n <- 1024
 # number of dimensions; not all of these may be used for task rules,
 # but all will be given to the agent as action choices
-ndims <- 5
+ndims <- as.integer(args[2])
 # number of features per dimension
-nfeatures <- 5
+nfeatures <- as.integer(args[3])
+# number of tasks to solve
+num_tasks <- as.integer(args[4]) # The total number of tasks (rules)
 
 # Identity vector
 hrr_i <- rep(0,n)
@@ -84,7 +86,7 @@ epsilon_ac <- 0.005
 # Test parameters
 trials_per_task <- 8        # consecutive trials to complete task
 tasks_to_complete <- 250    # tasks completed before quitting
-max_trials <- 20000         # this will override the above setting and quit when the number of trials is reached
+max_trials <- 50000         # this will override the above setting and quit when the number of trials is reached
 reward_dim <- 1
 
 tasks_complete <- 0
@@ -93,10 +95,10 @@ total_trials <- 0
 submoves <- 0
 
 ## Set the output that we want to measure
-output <- 'submove'
+#output <- 'submove'
 #output <- 'td'
 #output <- 'repvals'
-#output <- 'repvals_final'
+output <- 'repvals_final'
 #output <- 'plotreps'
 
 # These are free parameters for task switching
@@ -109,7 +111,8 @@ learn_num_taskreps <- FALSE         # If false then num_reps will never change; 
 transform <- TRUE                   # If true then log transform applied to all td learning
 #include_task_switch_trial_for_learning <- TRUE # If false and a task switch occurs the bad trial won't be learned
 include_task_switch_trial_for_learning <- FALSE # If false and a task switch occurs the bad trial won't be learned
-num_reps <- 3
+#num_reps <- 3
+num_reps <- num_tasks ## Since we have "learn_num_taskreps = false" just assume we already know the number of tasks
 max_reps <- 10
 lrate_tr <- 0.0075
 lrate_tr_anc <- 0.05
@@ -141,23 +144,25 @@ tr_remove_threshold <- c(replicate(10,.5))   # This should be lower than tr_add_
 # Initialize task switch variables
 task_switch_threshold <- -1 * bias_ac  # This is learned with q_error; it MUST start at this value
 task_rep <- 1
-num_tasks1 <- as.integer(args[2]) # The number of tasks for the first segment
-num_tasks2 <- as.integer(args[3]) # The number of tasks for the second segment
 
 # hrrs for abstract concepts
 p <- replicate(num_reps,hrr(n,normalized=TRUE))
 
-while( total_trials < max_trials && tasks_complete < tasks_to_complete*2 )
+## Commented for demo usability
+#while( total_trials < max_trials && tasks_complete < tasks_to_complete*2 )
+
+while( total_trials < max_trials && tasks_complete < tasks_to_complete )
 {
     ## OVERRIDE TASK REP SWITCHING
     #task_rep <- 1               # No task reps
     #task_rep <- reward_dim      # Perfect task reps
 
-    # Accomodate scenarios where the number of true tasks changes
-    if( tasks_complete < tasks_to_complete )
-        num_tasks = num_tasks1
-    else
-        num_tasks = num_tasks2
+## Commented for demo usability
+##     # Accomodate scenarios where the number of true tasks changes
+##     if( tasks_complete < tasks_to_complete )
+##         num_tasks = num_tasks1
+##     else
+##         num_tasks = num_tasks2
 
     ## #####################
     ## UPDATE WORKING MEMORY
@@ -381,8 +386,8 @@ if( output == 'submove' )
 if( output == 'repvals_final' ) {
     # Plot the values learned by the ancillary rep value NN
     for( r in 1:num_reps ) {
-        for( d in 1:ndims ) {
-            for( f in 1:nfeatures ) {
+        for( f in 1:nfeatures ) {
+            for( d in 1:ndims ) {
                 current_ac <- ac_features[,d,f]
                 cat(sprintf('%.4f',nndot(convolve(current_ac,p[,r]),W_tr_anc)))
                 if( d != ndims || f != nfeatures )
